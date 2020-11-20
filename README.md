@@ -9,7 +9,7 @@ The game itself is a simple timed avoidance game where you drag a box/smiley try
 
 Feel free to modify and use the code as you wish. Learn by **doing and experimenting**.
 
-A working demo is located at [Blocker](https://blocker.netlify.app).
+A working demo is located at [Blocker](https://happy-jones-2a6de0.netlify.app/).
 ---
 
 ## Get started
@@ -41,3 +41,5 @@ npm run build
 ```
 
 You can run the newly built app with `npm run start`. This uses [sirv](https://github.com/lukeed/sirv), which is included in your package.json's `dependencies` so that the app will work when you deploy to platforms like [Netlify](https://www.netlify.com/) or other similar platforms.
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/adacc8f2-d6bf-4620-87d2-1c828a6164ff/deploy-status)](https://app.netlify.com/sites/happy-jones-2a6de0/deploys)
