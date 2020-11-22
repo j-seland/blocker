@@ -1,15 +1,13 @@
 # Blocker
 ---
 
-Blocker is a javascript/svelte project for learning the basics of Svelte.
-It is based on an early 2000 program and converted to javascript/svelte.
-
+Blocker is a javascript/svelte project for learning the basics of Svelte. It is converted to javascript/svelte from an early 2000 program.
 Not wanting to write another "Hello World" app, this app serve the purpose to learn a new framework and as a start to utilize different functions.
 The game itself is a simple timed avoidance game where you drag a box/smiley trying to avoid 4 rectangles and the boundary.
 
 Feel free to modify and use the code as you wish. Learn by **doing and experimenting**.
 
-A working demo is located at [Blocker](https://happy-jones-2a6de0.netlify.app/).
+A working demo is located at [Blocker](https:jsblocker.netlify.app/).
 ---
 
 ## Get started

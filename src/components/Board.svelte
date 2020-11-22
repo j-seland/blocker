@@ -1,5 +1,6 @@
 <script>
 import { onMount } from "svelte";
+import Info from '../components/Info.svelte';
 
 const BOX = 40;
 const BOARD = 500;
@@ -15,7 +16,9 @@ const rightBoundary = BOARDOFFSET + BOARD;
 const soundHitBoundary = new Audio('/audio/boundary.mp3');
 const soundGameOver = new Audio('/audio/gameover.mp3');
 
-let tracker     = { x: 0, y: 0, top:0, left:0, bottom:0, right:0 };
+let tracker = { x: 0, y: 0, top:0, left:0, bottom:0, right:0 };
+let detinfo = false;
+
 let gameover    = false;
 let enemyxdir   = [1,1,1,1]; // used in moveEnemy
 let enemyydir   = [1,1,1,1]; // used in moveEnemy
@@ -67,39 +70,36 @@ function setNewpos(id, xpos, ypos)	{
 }
 
 function hitDetection(num) {
-  let erect = document.querySelector(`#enemy${num}`).getBoundingClientRect();
-  let brect = document.querySelector('#box').getBoundingClientRect();
-
-  let difX = brect.left - erect.left;
-  let difY = brect.top - erect.top;
-  let eneX = erect.right - erect.left;
-  let eneY = erect.bottom - erect.top;
-  let boxX = BOX;
-  let boxY = BOX;
-
-  if (difX > (-1 * boxX) && difX < eneX && difY > (-1 * boxY) && difY < eneY) {
+  let r1 = document.querySelector('#box').getBoundingClientRect();
+  let r2 = document.querySelector(`#enemy${num}`).getBoundingClientRect();
+  let r1W = BOX;
+  let r1H = BOX;
+  let r2W = r2.right - r2.left;
+  let r2H = r2.bottom - r2.top;
+  // AABB Axis-Aligned Bounding Box Hit Detection
+  if (r1.x < r2.x + r2W && r1.x + r1W > r2.x && r1.y < r2.y + r2H && r1.y + r1H > r2.y) {
     gameOver();
   }
 }
 
 function moveEnemy(num, step_x, step_y) {
   let top, left, x, y, newposx, newposy;
-  let rect = document.querySelector(`#enemy${num}`).getBoundingClientRect();
+  let r2 = document.querySelector(`#enemy${num}`).getBoundingClientRect();
 
-  top = rect.top;
-  left = rect.left;
-  x = rect.right - rect.left;
-  y = rect.bottom - rect.top;
+  top = r2.top;
+  left = r2.left;
+  x = r2.right - left;
+  y = r2.bottom - top;
 
   if (top >= (BOARD - y) || top <= BOARDOFFSET) {
     enemyydir[num] = -1 * enemyydir[num];
   }
-  newposy = parseInt(top + (step_y * enemyydir[num]), 10);
+  newposy = top + (step_y * enemyydir[num]);
 
   if (left >= (BOARD - x) || left <= BOARDOFFSET) {
     enemyxdir[num] = -1 * enemyxdir[num];
   }
-  newposx = parseInt(left + (step_x * enemyxdir[num]), 10);
+  newposx = left + (step_x * enemyxdir[num]);
 
   setNewpos(`enemy${num}`, newposx, newposy);
 
@@ -147,15 +147,15 @@ function handleMousedown(e) {
   function handleMousemove(e) {
     let newX = tracker.x - e.clientX;
     let newY = tracker.y - e.clientY;
-    let rect = el.getBoundingClientRect();
-    el.style.left = `${rect.left - newX}px`;
-    el.style.top = `${rect.top - newY}px`;
+    let r1 = el.getBoundingClientRect();
+    el.style.left = `${r1.left - newX}px`;
+    el.style.top = `${r1.top - newY}px`;
     tracker.x = e.clientX;
     tracker.y = e.clientY;
-    tracker.top = rect.top;
-    tracker.left = rect.left;
-    tracker.bottom = rect.bottom;
-    tracker.right = rect.right;
+    tracker.top = r1.top;
+    tracker.left = r1.left;
+    tracker.bottom = r1.bottom;
+    tracker.right = r1.right;
     checkBoundary();
   }
 
@@ -212,7 +212,7 @@ onMount(() => {
 }
 
 #enemy3 {
-  background-color: #aaa100;
+  background-color: #aabb00;
   position: absolute;
   top: calc(var(--board-offset) + 70px);
   left: calc(var(--board-offset) + 70px);
@@ -233,12 +233,6 @@ onMount(() => {
 .scoreboard {
   position: absolute;
   top: 540px;
-  left: 20px;
-}
-
-.info {
-  position: absolute;
-  top: 720px;
   left: 20px;
 }
 
@@ -266,10 +260,11 @@ onMount(() => {
   <p>{#if gameover}<span class="gameover">GAMEOVER</span>{:else}<span class="playing">PLAYING</span>{/if}</p>
   <h2>Counter: {gamecounter} Seconds: {gameseconds}</h2>
   <button on:click={() => {document.location.reload()}}>Game Reset</button>
+  <label>
+  	<input type=checkbox bind:checked={detinfo}> Detailed Information
+  </label>
 </div>
-<div class="info">
-<!--
-  <p>Debug information.</p>
-  <pre>{JSON.stringify(tracker, null, 2)}</pre>
--->
-</div>
+
+{#if detinfo}
+  <Info>{JSON.stringify(tracker, null, 2)}</Info>
+{/if}
